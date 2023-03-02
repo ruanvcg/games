@@ -50,6 +50,30 @@ missil_rect = img_missil.get_rect()
 
 pontuacao = pygame.font.SysFont('fonts/PixelGameFont.tff', 50)
 
+def ressurgir_na_tela():
+    x = 1350
+    y = random.randint(1,640)
+    return [x,y]
+
+def recarregar_missil():
+    novo_fogo = False
+    novo_x_missil = x_aviao
+    novo_y_missil = y_aviao
+    nova_velocidade_missil = 0
+    return [novo_x_missil, novo_y_missil, novo_fogo, nova_velocidade_missil]
+
+#função para detectar as colisões
+def colisoes():
+    global pontos
+    if aviao_rect.colliderect(alien_rect) or alien_rect.x == 60:
+        pontos = pontos -1
+        return True
+    elif missil_rect.colliderect(alien_rect):
+        pontos = pontos + 1
+        return True
+    else:
+        return False
+
 #variável para o tiro
 fogo = False
 
