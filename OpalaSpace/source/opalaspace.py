@@ -107,6 +107,13 @@ while executar == True:
         fogo = True
         velocidade_missil = 100
 
+    if x_missil == 1300:
+        x_missil, y_missil, fogo, velocidade_missil = recarregar_missil()
+
+    if x_alien == 50 or colisoes():
+        x_alien = ressurgir_na_tela()[0]
+        y_alien = ressurgir_na_tela()[1]
+        
     if pontos == -1:
         executar = False
 
