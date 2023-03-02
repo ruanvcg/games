@@ -39,3 +39,81 @@ y_aviao = 300
 velocidade_missil = 1
 x_missil = 200
 y_missil = 300
+
+#variavel para armazenar a pontuação do jogo
+pontos = 1
+
+#cria objetos retangulo na tela em torno das figuras
+aviao_rect = img_aviao.get_rect()
+alien_rect = img_alien.get_rect()
+missil_rect = img_missil.get_rect()
+
+pontuacao = pygame.font.SysFont('fonts/PixelGameFont.tff', 50)
+
+#variável para o tiro
+fogo = False
+
+#variável para manter o jogo rodando em loop infinito
+executar = True
+
+#mantém o jogo rodando em loop até que seja fechada a janela
+while executar == True:
+    screen.blit(img_fundo,(0,0))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            executar = False
+    
+    x_rel = largura % img_fundo.get_rect().width
+    screen.blit(img_fundo, (x_rel - img_fundo.get_rect().width,0))
+    if x_rel < 1280:
+        screen.blit(img_fundo, (x_rel, 0))
+    
+    tecla = pygame.key.get_pressed()
+    if tecla[pygame.K_UP] and y_aviao > 1:
+        y_aviao = y_aviao - 5
+        if not fogo:
+            y_missil = y_missil - 5
+            
+    if tecla[pygame.K_DOWN] and y_aviao < 665:
+        y_aviao = y_aviao + 5
+        if not fogo:
+            y_missil = y_missil + 5
+    
+    if tecla[pygame.K_SPACE]:
+        fogo = True
+        velocidade_missil = 100
+
+    if pontos == -1:
+        executar = False
+
+    largura = largura - 1
+    x_missil = velocidade_missil + x_missil
+    x_alien = x_alien - 1
+
+    #adequando posição dos rect às imagens
+    aviao_rect.y = y_aviao
+    aviao_rect.x = x_aviao
+   
+    missil_rect.y = y_missil
+    missil_rect.x = x_missil
+
+    alien_rect.y = y_alien
+    alien_rect.x = x_alien
+
+    #desenha os objetos na tela para colisões
+    pygame.draw.rect(screen, (255,255,255), aviao_rect, 4)
+    pygame.draw.rect(screen, (255,255,255), missil_rect, 4)
+    pygame.draw.rect(screen, (255,255,255), alien_rect, 4)
+
+    #exibir os pontos na tela
+    score = pontuacao.render(f'Pontos: {int(pontos)}', True, (255,255,255))
+
+    #carrega as imagens na tela
+    screen.blit(score, (50,50))
+
+    screen.blit(img_alien, (x_alien, y_alien))
+    screen.blit(img_missil, (x_missil, y_missil))
+    screen.blit(img_aviao, (x_aviao, y_aviao))
+    
+    pygame.display.update()
+
