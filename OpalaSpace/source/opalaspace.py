@@ -16,7 +16,7 @@ altura = 720
 screen = pygame.display.set_mode((largura,altura))
 pygame.display.set_caption('Jogo Opala Space - IFPI campus Pedro II')
 
-img_fundo = pygame.image.load('figs/RaqueMan.jpg').convert_alpha()
+img_fundo = pygame.image.load('figs/RaqueMan.png').convert_alpha()
 img_fundo = pygame.transform.scale(img_fundo, (largura,altura))
 
 img_alien = pygame.image.load('figs/Manuel.PNG').convert_alpha()
