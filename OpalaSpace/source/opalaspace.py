@@ -17,8 +17,14 @@ pygame.mixer.music.set_volume(0.5)
 musica_fundo = pygame.mixer.music.load('sons/sons_Star Wars - The Imperial March.mp3')
 pygame.mixer.music.play(-1)
 
-barulho_colisao = pygame.mixer.Sound('sons/sons_smw_thunder.wav')
-barulho_colisao.set_volume(1.5)
+barulho_disparo_torpedo = pygame.mixer.Sound('sons/star-wars-blaster.mp3')
+barulho_disparo_torpedo.set_volume(0.1)
+
+barulho_colisao_torpedo = pygame.mixer.Sound('sons/sons_smw_thunder.wav')
+barulho_colisao_torpedo.set_volume(2)
+
+barulho_colisao_alien = pygame.mixer.Sound('sons/blaster.mp3')
+barulho_colisao_alien.set_volume(2)
 
 
 #configura a janela e o texto do jogo
@@ -80,12 +86,13 @@ def colisoes():
     if aviao_rect.colliderect(alien_rect) or alien_rect.x <= 60:
         velocidade_alien -= 0.1
         vidas = vidas -1
+        barulho_colisao_alien.play()
         print("Colisão")
         return True
     elif missil_rect.colliderect(alien_rect):
         velocidade_alien += 0.1
         pontos = pontos + 1
-        barulho_colisao.play()
+        barulho_colisao_torpedo.play()
         return True
     else:
         return False
@@ -121,6 +128,7 @@ while executar == True:
     
     if tecla[pygame.K_SPACE]:
         fogo = True
+        barulho_disparo_torpedo.play()
         velocidade_missil = 10
 
     if x_missil == 1300:
