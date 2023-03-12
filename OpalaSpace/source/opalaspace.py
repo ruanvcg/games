@@ -77,7 +77,7 @@ def recarregar_missil():
 #função para detectar as colisões
 def colisoes():
     global pontos, velocidade_alien, vidas
-    if aviao_rect.colliderect(alien_rect) or alien_rect.x == 60:
+    if aviao_rect.colliderect(alien_rect) or alien_rect.x <= 60:
         velocidade_alien -= 0.1
         vidas = vidas -1
         print("Colisão")
