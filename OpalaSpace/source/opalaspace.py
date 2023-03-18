@@ -12,36 +12,53 @@ except:
 largura = 1280
 altura = 720
 
+#sons do jogo
+pygame.mixer.music.set_volume(0.5)
+musica_fundo = pygame.mixer.music.load('sons/sons_Star Wars - The Imperial March.mp3')
+pygame.mixer.music.play(-1)
+
+barulho_disparo_torpedo = pygame.mixer.Sound('sons/star-wars-blaster.mp3')
+barulho_disparo_torpedo.set_volume(0.1)
+
+barulho_colisao_torpedo = pygame.mixer.Sound('sons/sons_smw_thunder.wav')
+barulho_colisao_torpedo.set_volume(2)
+
+barulho_colisao_alien = pygame.mixer.Sound('sons/blaster.mp3')
+barulho_colisao_alien.set_volume(2)
+
+
 #configura a janela e o texto do jogo
 screen = pygame.display.set_mode((largura,altura))
 pygame.display.set_caption('Jogo Opala Space - IFPI campus Pedro II')
 
-img_fundo = pygame.image.load('figs/fundo.jpg').convert_alpha()
+img_fundo = pygame.image.load('figs/fundo5.jpg').convert_alpha()
 img_fundo = pygame.transform.scale(img_fundo, (largura,altura))
 
-img_alien = pygame.image.load('figs/alien.png').convert_alpha()
-img_alien = pygame.transform.scale(img_alien, (50,50))
+img_alien = pygame.image.load('figs/MilleniumFalcon.png').convert_alpha()
+img_alien = pygame.transform.scale(img_alien, (200,200))
+img_alien = pygame.transform.rotate(img_alien, +90)
 
-img_aviao = pygame.image.load('figs/aviao.png').convert_alpha()
-img_aviao = pygame.transform.scale(img_aviao, (50,50))
+img_aviao = pygame.image.load('figs/Nave.png').convert_alpha()
+img_aviao = pygame.transform.scale(img_aviao, (150,150))
 img_aviao = pygame.transform.rotate(img_aviao, -90)
 
-img_missil = pygame.image.load('figs/missil.png')
-img_missil = pygame.transform.scale(img_missil,(25,25))
-img_missil = pygame.transform.rotate(img_missil, -45)
+img_missil = pygame.image.load('figs/torpedo.png')
+img_missil = pygame.transform.scale(img_missil,(100,45))
 
-x_alien = 500
+
+x_alien = 1350
 y_alien = 360
 
 x_aviao = 200 
 y_aviao = 300
 
-velocidade_missil = 1
+velocidade_missil = 0
 x_missil = 200
-y_missil = 300
-
+y_missil = 355
 #variavel para armazenar a pontuação do jogo
-pontos = 1
+pontos = 0
+vidas = 4
+velocidade_alien = 1
 
 #cria objetos retangulo na tela em torno das figuras
 aviao_rect = img_aviao.get_rect()
@@ -49,6 +66,7 @@ alien_rect = img_alien.get_rect()
 missil_rect = img_missil.get_rect()
 
 pontuacao = pygame.font.SysFont('fonts/PixelGameFont.tff', 50)
+total_vidas = pygame.font.SysFont('fonts/PixelGameFont.tff', 50)
 
 def ressurgir_na_tela():
     x = 1350
@@ -58,18 +76,23 @@ def ressurgir_na_tela():
 def recarregar_missil():
     novo_fogo = False
     novo_x_missil = x_aviao
-    novo_y_missil = y_aviao
+    novo_y_missil = y_aviao + 55
     nova_velocidade_missil = 0
     return [novo_x_missil, novo_y_missil, novo_fogo, nova_velocidade_missil]
 
 #função para detectar as colisões
 def colisoes():
-    global pontos
-    if aviao_rect.colliderect(alien_rect) or alien_rect.x == 60:
-        pontos = pontos -1
+    global pontos, velocidade_alien, vidas
+    if aviao_rect.colliderect(alien_rect) or alien_rect.x <= 60:
+        velocidade_alien -= 0.1
+        vidas = vidas -1
+        barulho_colisao_alien.play()
+        print("Colisão")
         return True
     elif missil_rect.colliderect(alien_rect):
+        velocidade_alien += 0.1
         pontos = pontos + 1
+        barulho_colisao_torpedo.play()
         return True
     else:
         return False
@@ -105,7 +128,8 @@ while executar == True:
     
     if tecla[pygame.K_SPACE]:
         fogo = True
-        velocidade_missil = 100
+        barulho_disparo_torpedo.play()
+        velocidade_missil = 10
 
     if x_missil == 1300:
         x_missil, y_missil, fogo, velocidade_missil = recarregar_missil()
@@ -114,12 +138,12 @@ while executar == True:
         x_alien = ressurgir_na_tela()[0]
         y_alien = ressurgir_na_tela()[1]
         
-    if pontos == -1:
+    if vidas == 0:
         executar = False
 
     largura = largura - 1
     x_missil = velocidade_missil + x_missil
-    x_alien = x_alien - 1
+    x_alien = x_alien - velocidade_alien
 
     #adequando posição dos rect às imagens
     aviao_rect.y = y_aviao
@@ -131,16 +155,15 @@ while executar == True:
     alien_rect.y = y_alien
     alien_rect.x = x_alien
 
-    #desenha os objetos na tela para colisões
-    pygame.draw.rect(screen, (255,255,255), aviao_rect, 4)
-    pygame.draw.rect(screen, (255,255,255), missil_rect, 4)
-    pygame.draw.rect(screen, (255,255,255), alien_rect, 4)
+
 
     #exibir os pontos na tela
     score = pontuacao.render(f'Pontos: {int(pontos)}', True, (255,255,255))
+    life = total_vidas.render(f'Vidas: {int(vidas)}', True, (255,255,255))
 
     #carrega as imagens na tela
     screen.blit(score, (50,50))
+    screen.blit(life, (50,100))
 
     screen.blit(img_alien, (x_alien, y_alien))
     screen.blit(img_missil, (x_missil, y_missil))
