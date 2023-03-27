@@ -38,6 +38,13 @@ img_alien = pygame.image.load('figs/MilleniumFalcon.png').convert_alpha()
 img_alien = pygame.transform.scale(img_alien, (200,200))
 img_alien = pygame.transform.rotate(img_alien, +90)
 
+
+#img da explosao
+img_explosion = pygame.image.load('figs/explosion.png').convert_alpha()
+img_explosion = pygame.transform.scale(img_explosion, (210, 210))
+
+
+
 img_aviao = pygame.image.load('figs/Nave.png').convert_alpha()
 img_aviao = pygame.transform.scale(img_aviao, (150,150))
 img_aviao = pygame.transform.rotate(img_aviao, -90)
@@ -48,6 +55,11 @@ img_missil = pygame.transform.scale(img_missil,(100,45))
 
 x_alien = 1350
 y_alien = 360
+
+#explosao
+x_explosion = 1350
+y_explosion = 360
+
 
 x_aviao = 200 
 y_aviao = 300
@@ -81,15 +93,24 @@ def recarregar_missil():
     return [novo_x_missil, novo_y_missil, novo_fogo, nova_velocidade_missil]
 
 #função para detectar as colisões
-def colisoes():
+def colisoes(x_alien, y_alien):
     global pontos, velocidade_alien, vidas
     if aviao_rect.colliderect(alien_rect) or alien_rect.x <= 60:
+
+        #carrega a img do alien explodindo
+        screen.blit(img_explosion, (x_alien, y_alien))
+
         velocidade_alien -= 0.1
         vidas = vidas -1
         barulho_colisao_alien.play()
         print("Colisão")
         return True
+    
     elif missil_rect.colliderect(alien_rect):
+        #carrega a img do alien explodindo
+        screen.blit(img_explosion, (x_alien, y_alien))
+
+
         velocidade_alien += 0.1
         pontos = pontos + 1
         barulho_colisao_torpedo.play()
@@ -134,11 +155,19 @@ while executar == True:
     if x_missil == 1300:
         x_missil, y_missil, fogo, velocidade_missil = recarregar_missil()
 
-    if x_alien == 50 or colisoes():
+    if x_alien == 50 or colisoes(x_alien, y_alien):
         x_alien = ressurgir_na_tela()[0]
         y_alien = ressurgir_na_tela()[1]
         
     if vidas == 0:
+        #carrega a img do aviao explodindo
+        aux = (x_aviao, y_aviao)
+        # screen.blit(img_explosion, (x_aviao, y_aviao))
+        #troca a img do aviao pela explosao
+        img_aviao = pygame.image.load('figs/explosion.png').convert_alpha()
+        img_aviao = pygame.transform.scale(img_aviao, (210, 210))
+        screen.blit(img_aviao, aux)
+
         executar = False
 
     largura = largura - 1
